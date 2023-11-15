@@ -16,13 +16,11 @@
     },
     "upload": {
       "name": "upload",
-      "command": "yarn upload",
-      "runAtStart": false
+      "command": "yarn upload"
     },
     "format": {
       "name": "format",
-      "command": "yarn format",
-      "runAtStart": false
+      "command": "yarn format"
     }
   }
 }
