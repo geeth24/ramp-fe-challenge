@@ -12,26 +12,21 @@ export function App() {
   const { data: employees, ...employeeUtils } = useEmployees()
   const { data: paginatedTransactions, ...paginatedTransactionsUtils } = usePaginatedTransactions()
   const { data: transactionsByEmployee, ...transactionsByEmployeeUtils } = useTransactionsByEmployee()
-  const [isLoading, setIsLoading] = useState(false)
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(EMPTY_EMPLOYEE)
-
+  const [viewMoreReload, setViewMoreReload] = useState(false)
   const transactions = useMemo(
     () => paginatedTransactions?.data ?? transactionsByEmployee ?? null,
     [paginatedTransactions, transactionsByEmployee]
   )
 
   const loadAllTransactions = useCallback(async () => {
-    setIsLoading(true)
-
     if (employees === null) {
       await employeeUtils.fetchAll()
     }
-    if (paginatedTransactions === null) {
+    if (paginatedTransactions === null || viewMoreReload) {
       await paginatedTransactionsUtils.fetchAll()
     }
-
-    setIsLoading(false)
-  }, [employeeUtils, paginatedTransactionsUtils, transactionsByEmployeeUtils])
+  }, [employeeUtils, paginatedTransactionsUtils, viewMoreReload, employees, paginatedTransactions])
 
   const loadTransactionsByEmployee = useCallback(
     async (employeeId: string) => {
@@ -90,6 +85,7 @@ export function App() {
                 className="RampButton"
                 disabled={paginatedTransactionsUtils.loading}
                 onClick={async () => {
+                  setViewMoreReload(true)
                   await loadAllTransactions()
                 }}
               >
